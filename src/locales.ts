@@ -1,13 +1,29 @@
 import { type App } from 'vue';
+import { type TranslateOptions, useI18n } from 'vue-i18n';
+
+type Leaves<T> = T extends object ? { [K in keyof T]: `${Exclude<K, symbol>}${Leaves<T[K]> extends never ? '' : `.${Leaves<T[K]>}`}` }[keyof T] : never;
 
 const createI18nLocales = () => {
   return {
     install: (app: App<any>) => {
-      app.config.globalProperties.LOCALES = {} as InstanceOOM.I18nLocalesKeyType;
+      app.config.globalProperties.$translate = (key: Leaves<InstanceOOM.I18nLocalesKeyType>, named?: Record<string, unknown>, options?: TranslateOptions<string> | undefined) => {
+        return named ? app.config.globalProperties.$t(key || 'Translating', named, options as any) : app.config.globalProperties.$t(key || 'Translating');
+      };
     },
   };
 };
 
-const localesKeyType = {} as InstanceOOM.I18nLocalesKeyType;
+const useI18nLocales = () => {
+  const { t, locale } = useI18n();
 
-export { localesKeyType, createI18nLocales };
+  const translate = (key: Leaves<InstanceOOM.I18nLocalesKeyType>, named?: Record<string, unknown>, options?: TranslateOptions<string> | undefined) => {
+    return named ? t(key || 'Translating', named, options) : t(key || 'Translating');
+  };
+
+  return {
+    translate,
+    locale,
+  };
+};
+
+export { createI18nLocales, useI18nLocales };
