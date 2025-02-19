@@ -41,8 +41,8 @@ const getLocaleConf = (dirPath: string, flatKey: boolean) => {
   return result;
 };
 
-const VueI18nLocalesPlugin = (opts: { dir: string; flatKey?: boolean; root?: string; defaultLocale?: string }): Plugin => {
-  opts = Object.assign({ flatKey: true }, opts);
+const VueI18nLocalesPlugin = (opts: { dir: string; flatKey?: boolean; root?: string; defaultLocale?: string, generateDeclareFile?: boolean }): Plugin => {
+  opts = Object.assign({ flatKey: true, generateDeclareFile: true }, opts);
   const localesDir = path.normalize(opts.dir),
     root = path.normalize(opts.root || process.cwd()),
     defaultLocale = opts.defaultLocale || 'en-us';
@@ -57,6 +57,7 @@ const VueI18nLocalesPlugin = (opts: { dir: string; flatKey?: boolean; root?: str
   };
 
   const writeConfigFiles = () => {
+    if (!opts.generateDeclareFile) return
     const temp = getDefaultLocales();
     const stringTypePlaceholder = `__STRING__${new Date().valueOf()}`;
     const result = keys(temp).reduce((r, key) => setWith(r, key, stringTypePlaceholder, Object), {});

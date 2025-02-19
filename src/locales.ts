@@ -17,7 +17,7 @@ const useI18nLocales = () => {
   const { t, locale } = useI18n();
 
   const translate = (key: Leaves<InstanceOOM.I18nLocalesKeyType>, named?: Record<string, unknown>, options?: TranslateOptions<string> | undefined) => {
-    return named ? t(key || 'Translating', named, options) : t(key || 'Translating');
+    return named ? t(key || 'Translating', named, options as any) : t(key || 'Translating');
   };
 
   return {
